@@ -256,11 +256,8 @@ class RenderSliverStickyHeader extends RenderSliver with RenderSliverHelpers {
       if (stickToEnd) {
         // Logic for sticking the header to the end
         headerPosition = sticky
-            ? math.min(
-                constraints.viewportMainAxisExtent - headerExtent,
-                childScrollExtent -
-                    constraints.scrollOffset +
-                    (overlapsContent ? 0 : _headerExtent!))
+            ? math.min(constraints.viewportMainAxisExtent - headerExtent,
+                childScrollExtent - constraints.scrollOffset)
             : constraints.viewportMainAxisExtent - headerExtent;
       } else {
         // Normal behavior
