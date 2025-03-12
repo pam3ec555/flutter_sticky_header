@@ -16,9 +16,11 @@ class RenderSliverStickyHeader extends RenderSliver with RenderSliverHelpers {
     bool overlapsContent = false,
     bool sticky = true,
     StickyHeaderController? controller,
+    bool stickToEnd = false,
   })  : _overlapsContent = overlapsContent,
         _sticky = sticky,
-        _controller = controller {
+        _controller = controller,
+        _stickToEnd = stickToEnd {
     this.header = header as RenderBox?;
     this.child = child;
   }
@@ -75,6 +77,15 @@ class RenderSliverStickyHeader extends RenderSliver with RenderSliverHelpers {
     if (_child != null) dropChild(_child!);
     _child = value;
     if (_child != null) adoptChild(_child!);
+  }
+
+  bool get stickToEnd => _stickToEnd;
+  bool _stickToEnd;
+
+  set stickToEnd(bool value) {
+    if (_stickToEnd == value) return;
+    _stickToEnd = value;
+    markNeedsLayout();
   }
 
   @override
@@ -141,7 +152,6 @@ class RenderSliverStickyHeader extends RenderSliver with RenderSliverHelpers {
       return;
     }
 
-    // One of them is not null.
     AxisDirection axisDirection = applyGrowthDirectionToAxisDirection(
         constraints.axisDirection, constraints.growthDirection);
 
@@ -156,7 +166,6 @@ class RenderSliverStickyHeader extends RenderSliver with RenderSliverHelpers {
       _headerExtent = computeHeaderExtent();
     }
 
-    // Compute the header extent only one time.
     double headerExtent = headerLogicalExtent!;
     final double headerPaintExtent =
         calculatePaintOffset(constraints, from: 0.0, to: headerExtent);
@@ -242,13 +251,27 @@ class RenderSliverStickyHeader extends RenderSliver with RenderSliverHelpers {
       final SliverPhysicalParentData? headerParentData =
           header!.parentData as SliverPhysicalParentData?;
       final double childScrollExtent = child?.geometry?.scrollExtent ?? 0.0;
-      final double headerPosition = sticky
-          ? math.min(
-              constraints.overlap,
-              childScrollExtent -
-                  constraints.scrollOffset -
-                  (overlapsContent ? _headerExtent! : 0.0))
-          : -constraints.scrollOffset;
+      double headerPosition;
+
+      if (stickToEnd) {
+        // Logic for sticking the header to the end
+        headerPosition = sticky
+            ? math.min(
+                constraints.viewportMainAxisExtent - headerExtent,
+                childScrollExtent -
+                    constraints.scrollOffset +
+                    (overlapsContent ? 0 : _headerExtent!))
+            : constraints.viewportMainAxisExtent - headerExtent;
+      } else {
+        // Normal behavior
+        headerPosition = sticky
+            ? math.min(
+                constraints.overlap,
+                childScrollExtent -
+                    constraints.scrollOffset -
+                    (overlapsContent ? _headerExtent! : 0.0))
+            : -constraints.scrollOffset;
+      }
 
       _isPinned = sticky &&
           ((constraints.scrollOffset + constraints.overlap) > 0.0 ||

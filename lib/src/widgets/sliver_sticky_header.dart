@@ -154,6 +154,7 @@ class SliverStickyHeader extends RenderObjectWidget {
     this.sliver,
     this.overlapsContent = false,
     this.sticky = true,
+    this.stickToEnd = false,
     this.controller,
   }) : super(key: key);
 
@@ -203,11 +204,14 @@ class SliverStickyHeader extends RenderObjectWidget {
   /// will be used.
   final StickyHeaderController? controller;
 
+  final bool stickToEnd;
+
   @override
   RenderSliverStickyHeader createRenderObject(BuildContext context) {
     return RenderSliverStickyHeader(
       overlapsContent: overlapsContent,
       sticky: sticky,
+      stickToEnd: stickToEnd,
       controller: controller ?? DefaultStickyHeaderController.of(context),
     );
   }
