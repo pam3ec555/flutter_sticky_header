@@ -1,8 +1,16 @@
+## 0.8.0
+### Changed
+* Update Flutter constraints.
+* Update version of value_layout_builder.
+  
+### Fixed
+* Flutter 3.32 breaking changes issue.
+
 ## 0.7.0
 ### Changed
 * Update Flutter and Dart SDK constraints.
 * Update usage of hashValues (https://github.com/letsar/flutter_sticky_header/pull/100)
-* Update version of value_layout_builder
+* Update version of value_layout_builder.
 
 ## 0.6.5
 ### Fixed
